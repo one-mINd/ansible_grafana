@@ -12,6 +12,8 @@ grafana_data:
 grafana_docker_image: "grafana/grafana"
 grafana_port: "3000"
 grafana_container_port: "3000"
+grafana_ports:
+  - "{{ grafana_port }}:{{ grafana_container_port }}"
 grafana_storage: /var/grafana/storage
 grafana_provisioning_dir: /var/grafana/provisioning
 grafana_config_ini_directory: /var/grafana

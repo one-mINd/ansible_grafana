@@ -78,8 +78,7 @@
             image: {{ grafana_docker_image }}
             hostname: "{{ grafana_docker_hostname }}"
             labels: {{ grafana.docker_labels }}
-            ports:
-              - "{{ grafana_port }}:{{ grafana_container_port }}"
+            ports: {{ grafana_ports }}
             volumes: {{ grafana_volumes }}
             environment:
               GF_PATHS_PROVISIONING: /etc/grafana/provisioning
