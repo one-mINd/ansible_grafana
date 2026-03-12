@@ -25,7 +25,7 @@
 
 - name: Grafana | Ensure Loki config
   ansible.builtin.template:
-    src: "loki/local-config.yaml"
+    src: "loki/local-config.yaml.j2"
     dest: "{{ grafana_loki_storage }}/local-config.yaml"
     owner: "{{ grafana_loki_directory_owner }}"
     group: "{{ grafana_loki_directory_group }}"
