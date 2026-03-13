@@ -52,13 +52,6 @@ grafana_datasources:
     access: proxy
     isDefault: true
 
-grafana_loki_install: false
-grafana_loki_image: "grafana/loki:3.1.1"
-grafana_loki_storage: /var/loki/
-grafana_loki_directory_owner: 10001
-grafana_loki_directory_group: 10001
-grafana_loki_docker_labels: []
-
 grafana_ldap_auth_enabled: false
 grafana_ldap_root: "dc=example,dc=com"
 grafana_ldap_config_path: /etc/grafana/config
@@ -143,3 +136,75 @@ grafana_custom_config: |
 
   [dataproxy]
   timeout = 300
+
+grafana_loki_install: false
+grafana_loki_image: "grafana/loki:3.1.1"
+grafana_loki_storage: /var/loki/
+grafana_loki_directory_owner: 10001
+grafana_loki_directory_group: 10001
+grafana_loki_docker_labels: []
+
+grafana_loki_config:
+
+  auth_enabled: false
+
+  server:
+    http_listen_port: 3100
+    http_server_write_timeout: 190s
+    http_server_read_timeout: 190s
+
+  querier:
+    max_concurrent: 12 
+
+  common:
+    path_prefix: /loki
+    storage:
+      filesystem:
+        chunks_directory: /var/lib/loki/data/chunks
+        rules_directory: /var/lib/loki/data/rules
+    replication_factor: 1
+    ring:
+      kvstore:
+        store: inmemory
+
+  schema_config:
+    configs:
+      - from: 2020-10-24
+        store: boltdb-shipper
+        object_store: filesystem
+        schema: v11
+        index:
+          prefix: index_
+          period: 24h
+      - from: 2025-01-11
+        store: tsdb
+        object_store: filesystem
+        schema: v13
+        index:
+          prefix: index_
+          period: 24h
+
+  storage_config:
+    tsdb_shipper:
+      active_index_directory: /var/lib/loki/data/tsdb-index
+      cache_location: /var/lib/loki/tsdb-cache
+
+  ruler:
+    alertmanager_url: http://localhost:9093
+
+  limits_config:
+    allow_structured_metadata: false
+    ingestion_rate_mb: 10
+    ingestion_burst_size_mb: 20
+    retention_period: 30d
+    split_queries_by_interval: 15m
+    query_timeout: 180s
+    max_query_parallelism: 12
+
+  compactor:
+    working_directory: /var/lib/loki/data/retention
+    compaction_interval: 10m
+    retention_enabled: true
+    retention_delete_delay: 2h
+    retention_delete_worker_count: 150
+    delete_request_store: filesystem
